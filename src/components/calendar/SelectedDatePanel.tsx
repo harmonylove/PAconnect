@@ -1,6 +1,6 @@
 
 import { format } from 'date-fns';
-import { Booking } from "@/types";
+import { Booking, BookingStatus } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BookingBlock from "./BookingBlock";
 
@@ -8,12 +8,14 @@ interface SelectedDatePanelProps {
   selectedDate: Date;
   bookings: Booking[];
   isLoading: boolean;
+  onStatusChange?: (bookingId: string, newStatus: BookingStatus) => void;
 }
 
 export default function SelectedDatePanel({ 
   selectedDate, 
   bookings, 
-  isLoading 
+  isLoading,
+  onStatusChange 
 }: SelectedDatePanelProps) {
   return (
     <Card>
@@ -28,7 +30,11 @@ export default function SelectedDatePanel({
         ) : bookings.length > 0 ? (
           <div className="space-y-4">
             {bookings.map(booking => (
-              <BookingBlock key={booking.id} booking={booking} />
+              <BookingBlock 
+                key={booking.id} 
+                booking={booking}
+                onStatusChange={onStatusChange}
+              />
             ))}
           </div>
         ) : (

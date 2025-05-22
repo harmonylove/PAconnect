@@ -63,7 +63,36 @@ export default function AvailabilityCalendar({
       onAvailabilityChange(updatedBookings);
     }
     
-    toast.success("Availability block has been added");
+    if (blockStatus === 'held') {
+      toast.info("Availability held for potential job", {
+        description: "You'll be notified if this becomes booked.",
+      });
+    } else if (blockStatus === 'booked') {
+      toast.success("Booking confirmed!");
+    }
+
+    setIsAddingBlock(false);
+    refetch();
+  };
+
+  const handleStatusChange = (bookingId: string, newStatus: BookingStatus) => {
+    const updatedBookings = bookings.map(booking => 
+      booking.id === bookingId 
+        ? { ...booking, status: newStatus } 
+        : booking
+    );
+    
+    if (onAvailabilityChange) {
+      onAvailabilityChange(updatedBookings);
+    }
+    
+    if (newStatus === 'booked') {
+      const booking = bookings.find(b => b.id === bookingId);
+      toast.success(`Booking confirmed!`, {
+        description: `${booking?.title || 'Availability'} has been booked.`,
+      });
+    }
+    
     refetch();
   };
   
@@ -144,6 +173,7 @@ export default function AvailabilityCalendar({
           selectedDate={selectedDate}
           bookings={selectedDateBookings}
           isLoading={isLoading}
+          onStatusChange={handleStatusChange}
         />
       </div>
 
