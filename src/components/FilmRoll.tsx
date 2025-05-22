@@ -15,7 +15,7 @@ const FilmRoll: React.FC<FilmRollProps> = ({ className }) => {
           strokeWidth={1.5}
         />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/4 rounded-full bg-brand-blue-300/30 blur-md"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/4 bg-brand-blue-300/40 blur-md rounded-full"></div>
     </div>
   );
 };

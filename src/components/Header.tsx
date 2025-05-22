@@ -66,9 +66,9 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
   );
 
   return (
-    <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm py-3 px-2 md:px-3">
-      <div className="flex items-center justify-between w-full mx-auto pl-1">
-        <div className="flex items-center space-x-2 md:space-x-4">
+    <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm py-3 px-1 md:px-2">
+      <div className="flex items-center justify-between w-full mx-auto pl-0">
+        <div className="flex items-center space-x-1 md:space-x-3">
           {isMobile && (
             <Sheet>
               <SheetTrigger asChild>
@@ -105,7 +105,7 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
           )}
           
           <Link to="/" className="flex items-center relative z-10">
-            <FilmRoll className="w-24 h-10" />
+            <FilmRoll className="w-20 h-8" />
             <div className="relative z-10">
               <span className="text-xl font-extrabold text-brand-blue">PA</span>
               <span className="text-xl font-extrabold text-brand-teal">Connect</span>
@@ -114,7 +114,7 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
         </div>
         
         {!isMobile && (
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-4">
             <Link to="/" className="font-medium text-gray-600 hover:text-brand-blue dark:text-gray-200 dark:hover:text-brand-blue-300">
               Dashboard
             </Link>
