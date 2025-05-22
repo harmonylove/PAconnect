@@ -1,11 +1,11 @@
 
 import Dashboard from '@/components/dashboard/Dashboard';
 import MainLayout from '@/components/layout/MainLayout';
-import { UserProvider, useUser } from '@/contexts/UserContext';
+import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
 
-const IndexContent = () => {
+const Index = () => {
   const { userRole, toggleUserRole, isPublic } = useUser();
   
   useEffect(() => {
@@ -18,17 +18,9 @@ const IndexContent = () => {
   }, [isPublic]);
   
   return (
-    <Dashboard userRole={userRole} toggleUserRole={toggleUserRole} />
-  );
-};
-
-const Index = () => {
-  return (
-    <UserProvider>
-      <MainLayout>
-        <IndexContent />
-      </MainLayout>
-    </UserProvider>
+    <MainLayout>
+      <Dashboard userRole={userRole} toggleUserRole={toggleUserRole} />
+    </MainLayout>
   );
 };
 
