@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import { Calendar } from "@/components/ui/calendar";
@@ -10,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 import { CalendarIcon, Clock } from "lucide-react";
 import { Booking, BookingStatus } from "@/types";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,7 +22,6 @@ export default function AvailabilityCalendar({
   userId, 
   onAvailabilityChange 
 }: AvailabilityCalendarProps) {
-  const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isAddingBlock, setIsAddingBlock] = useState(false);
   const [blockTitle, setBlockTitle] = useState('');
@@ -79,11 +77,7 @@ export default function AvailabilityCalendar({
 
   const handleSaveBlock = () => {
     if (!blockTitle) {
-      toast({
-        title: "Error",
-        description: "Please provide a title for this block",
-        variant: "destructive"
-      });
+      toast.error("Please provide a title for this block");
       return;
     }
 
@@ -107,10 +101,7 @@ export default function AvailabilityCalendar({
       onAvailabilityChange(updatedBookings);
     }
     
-    toast({
-      title: "Success",
-      description: "Availability block has been added",
-    });
+    toast.success("Availability block has been added");
     
     // Reset form
     setBlockTitle('');
