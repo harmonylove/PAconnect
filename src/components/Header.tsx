@@ -66,9 +66,9 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
   );
 
   return (
-    <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm py-3 px-4 md:px-6">
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
-        <div className="flex items-center space-x-4">
+    <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm py-3 px-2 md:px-3">
+      <div className="flex items-center justify-between w-full mx-auto pl-1">
+        <div className="flex items-center space-x-2 md:space-x-4">
           {isMobile && (
             <Sheet>
               <SheetTrigger asChild>
