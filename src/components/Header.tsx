@@ -104,9 +104,9 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
             </Sheet>
           )}
           
-          <Link to="/" className="flex items-center relative z-10">
+          <Link to="/" className="flex items-center relative z-10 gap-0">
             <FilmRoll className="w-20 h-8" />
-            <div className="relative z-10">
+            <div className="relative z-10 -ml-1">
               <span className="text-xl font-extrabold text-brand-blue">PA</span>
               <span className="text-xl font-extrabold text-brand-teal">Connect</span>
             </div>
