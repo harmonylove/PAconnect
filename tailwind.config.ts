@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				cursive: ['"Dancing Script"', 'cursive'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -122,13 +125,18 @@ export default {
         'slideUp': {
           from: { transform: 'translateY(10px)', opacity: '0' },
           to: { transform: 'translateY(0)', opacity: '1' }
+        },
+        'spin': {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' }
         }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
         'fadeIn': 'fadeIn 0.5s ease-out forwards',
-        'slideUp': 'slideUp 0.5s ease-out forwards'
+        'slideUp': 'slideUp 0.5s ease-out forwards',
+        'spin-slow': 'spin 10s linear infinite'
 			}
 		}
 	},

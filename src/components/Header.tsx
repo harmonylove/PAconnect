@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { UserRole } from '@/types';
+import FilmRoll from './FilmRoll';
 
 interface HeaderProps {
   userRole?: UserRole;
@@ -99,9 +100,12 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
             </Sheet>
           )}
           
-          <Link to="/" className="flex items-center">
-            <span className="text-xl font-bold text-brand-blue">PA</span>
-            <span className="text-xl font-bold text-brand-teal">Connect</span>
+          <Link to="/" className="flex items-center relative z-10">
+            <FilmRoll className="w-24 h-10" />
+            <div className="relative z-10">
+              <span className="text-xl font-bold text-brand-blue font-cursive">PA</span>
+              <span className="text-xl font-bold text-brand-teal font-cursive">Connect</span>
+            </div>
           </Link>
         </div>
         
