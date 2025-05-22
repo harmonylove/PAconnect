@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { Assistant, productionTypeLabels } from '@/types';
 
 interface AssistantCardProps {
@@ -78,10 +79,10 @@ export default function AssistantCard({
       <CardFooter className="border-t pt-3 flex gap-2">
         <Button 
           variant="outline" 
-          className="flex-1" 
-          onClick={() => onViewProfile && onViewProfile(assistant)}
+          className="flex-1"
+          asChild
         >
-          View Profile
+          <Link to={`/assistant/${assistant.id}`}>View Profile</Link>
         </Button>
         <Button 
           variant="default" 

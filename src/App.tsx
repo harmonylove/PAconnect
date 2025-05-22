@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import JobHistory from "./pages/JobHistory";
+import AssistantProfile from "./pages/AssistantProfile";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/job-history" element={<JobHistory />} />
+          <Route path="/assistant/:id" element={<AssistantProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
