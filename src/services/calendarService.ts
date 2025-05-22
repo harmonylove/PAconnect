@@ -17,6 +17,19 @@ export const getBookingsForDate = (date: Date, bookings: Booking[]) => {
   );
 };
 
+// Generate date range from start to end date
+export const generateDateRange = (startDate: Date, endDate: Date): Date[] => {
+  const range: Date[] = [];
+  let currentDate = new Date(startDate);
+  
+  while (currentDate <= endDate) {
+    range.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  
+  return range;
+};
+
 // Mock function to simulate fetching bookings (replace with Supabase)
 export const getMockBookings = (userId?: string): Booking[] => {
   const today = new Date();

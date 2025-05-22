@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import SelectedDatePanel from './calendar/SelectedDatePanel';
 import AddBlockForm from './calendar/AddBlockForm';
-import { combineDateTime, getBookingsForDate, getMockBookings } from '@/services/calendarService';
+import { combineDateTime, getBookingsForDate, getMockBookings, generateDateRange } from '@/services/calendarService';
 
 interface AvailabilityCalendarProps {
   userId?: string;
@@ -69,6 +69,28 @@ export default function AvailabilityCalendar({
   
   const selectedDateBookings = getBookingsForDate(selectedDate, bookings);
   
+  // Create date ranges for different booking statuses
+  const bookedDates = bookings
+    .filter(booking => booking.status === 'booked')
+    .flatMap(booking => generateDateRange(
+      new Date(booking.startDate),
+      new Date(booking.endDate)
+    ));
+    
+  const heldDates = bookings
+    .filter(booking => booking.status === 'held')
+    .flatMap(booking => generateDateRange(
+      new Date(booking.startDate),
+      new Date(booking.endDate)
+    ));
+    
+  const availableDates = bookings
+    .filter(booking => booking.status === 'available')
+    .flatMap(booking => generateDateRange(
+      new Date(booking.startDate),
+      new Date(booking.endDate)
+    ));
+  
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -83,45 +105,9 @@ export default function AvailabilityCalendar({
                 selected={selectedDate}
                 onSelect={(date) => date && setSelectedDate(date)}
                 modifiers={{
-                  booked: bookings
-                    .filter(booking => booking.status === 'booked')
-                    .flatMap(booking => {
-                      const start = new Date(booking.startDate);
-                      const end = new Date(booking.endDate);
-                      const range = [];
-                      let current = new Date(start);
-                      while (current <= end) {
-                        range.push(new Date(current));
-                        current.setDate(current.getDate() + 1);
-                      }
-                      return range;
-                    }),
-                  held: bookings
-                    .filter(booking => booking.status === 'held')
-                    .flatMap(booking => {
-                      const start = new Date(booking.startDate);
-                      const end = new Date(booking.endDate);
-                      const range = [];
-                      let current = new Date(start);
-                      while (current <= end) {
-                        range.push(new Date(current));
-                        current.setDate(current.getDate() + 1);
-                      }
-                      return range;
-                    }),
-                  available: bookings
-                    .filter(booking => booking.status === 'available')
-                    .flatMap(booking => {
-                      const start = new Date(booking.startDate);
-                      const end = new Date(booking.endDate);
-                      const range = [];
-                      let current = new Date(start);
-                      while (current <= end) {
-                        range.push(new Date(current));
-                        current.setDate(current.getDate() + 1);
-                      }
-                      return range;
-                    }),
+                  booked: bookedDates,
+                  held: heldDates,
+                  available: availableDates,
                 }}
                 modifiersStyles={{
                   booked: { 
