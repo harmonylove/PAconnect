@@ -1,17 +1,12 @@
-
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Conversation, Message as MessageType, UserRole } from '@/types';
 import ConversationList from '@/components/ConversationList';
 import { UserProvider, useUser } from '@/contexts/UserContext';
-import { format } from 'date-fns';
-import { Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import MessageArea from '@/components/messages/MessageArea';
 
 // Mock users until we have proper user authentication
 const mockUsers = {
@@ -19,35 +14,6 @@ const mockUsers = {
   'prod1': { name: 'Acme Productions', avatar: '/placeholder.svg', role: 'production' as UserRole },
   'prod2': { name: 'Metro Films', avatar: '/placeholder.svg', role: 'production' as UserRole },
   'prod3': { name: 'Apex Studios', avatar: '/placeholder.svg', role: 'production' as UserRole },
-};
-
-// Message component
-const Message = ({ message, currentUserId }: { message: MessageType, currentUserId: string }) => {
-  const isOwnMessage = message.senderId === currentUserId;
-  const sender = mockUsers[message.senderId];
-
-  return (
-    <div className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-4`}>
-      {!isOwnMessage && (
-        <Avatar className="h-8 w-8 mr-2">
-          <AvatarImage src={sender?.avatar} alt={sender?.name} />
-          <AvatarFallback>{sender?.name?.[0] || '?'}</AvatarFallback>
-        </Avatar>
-      )}
-      <div className={`max-w-[75%] ${isOwnMessage ? 'bg-brand-blue text-white' : 'bg-muted'} rounded-lg p-3`}>
-        <p className="text-sm">{message.content}</p>
-        <p className={`text-xs mt-1 ${isOwnMessage ? 'text-brand-light/80' : 'text-muted-foreground'}`}>
-          {format(new Date(message.timestamp), 'h:mm a')}
-        </p>
-      </div>
-      {isOwnMessage && (
-        <Avatar className="h-8 w-8 ml-2">
-          <AvatarImage src={mockUsers[currentUserId]?.avatar} alt={mockUsers[currentUserId]?.name} />
-          <AvatarFallback>{mockUsers[currentUserId]?.name?.[0] || '?'}</AvatarFallback>
-        </Avatar>
-      )}
-    </div>
-  );
 };
 
 // Messages content component
@@ -58,21 +24,11 @@ const MessagesContent = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [newMessage, setNewMessage] = useState('');
   const [participant, setParticipant] = useState({ name: '', avatar: '' });
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
   
   // Current user ID (for this mock, we're using user1 as the current user)
   const currentUserId = 'user1';
   
-  // Scroll to bottom of messages when new messages arrive
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
-
   // Fetch conversations from Supabase
   useEffect(() => {
     const fetchConversations = async () => {
@@ -298,10 +254,8 @@ const MessagesContent = () => {
     }
   };
   
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedConversation || !newMessage.trim()) return;
+  const sendMessage = async (newMessageContent: string) => {
+    if (!selectedConversation) return;
     
     try {
       // In a real app with Supabase auth:
@@ -310,7 +264,7 @@ const MessagesContent = () => {
       //   .insert({
       //     conversation_id: selectedConversation.id,
       //     sender_id: auth.user.id,
-      //     content: newMessage.trim(),
+      //     content: newMessageContent,
       //   });
       //
       // if (error) throw error;
@@ -323,7 +277,7 @@ const MessagesContent = () => {
         id: `new-${Date.now()}`,
         senderId: currentUserId,
         receiverId: otherParticipantId,
-        content: newMessage.trim(),
+        content: newMessageContent,
         timestamp: new Date(),
         read: false
       };
@@ -349,7 +303,6 @@ const MessagesContent = () => {
       
       // Update state
       setConversations(updatedConversations);
-      setNewMessage('');
       
       // Show toast notification
       toast.success("Message sent");
@@ -385,64 +338,15 @@ const MessagesContent = () => {
         
         {/* Message Area */}
         <div className="md:col-span-2 border rounded-lg flex flex-col h-[70vh] bg-card">
-          {selectedConversation ? (
-            <>
-              {/* Header */}
-              <div className="p-4 border-b flex items-center">
-                <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage src={participant.avatar} alt={participant.name} />
-                  <AvatarFallback>{participant.name[0] || '?'}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="font-medium">{participant.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {userRole === 'assistant' ? 'Production Company' : 'Assistant'}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={messagesContainerRef}>
-                {messages.length > 0 ? (
-                  messages.map(message => (
-                    <Message 
-                      key={message.id} 
-                      message={message} 
-                      currentUserId={currentUserId} 
-                    />
-                  ))
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <p className="text-muted-foreground">No messages yet. Start the conversation!</p>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-              
-              {/* Message Input */}
-              <form onSubmit={sendMessage} className="p-4 border-t flex gap-2">
-                <Input
-                  placeholder="Type your message..."
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  className="flex-1"
-                />
-                <Button type="submit" disabled={!newMessage.trim()}>
-                  <Send className="h-4 w-4 mr-1" />
-                  Send
-                </Button>
-              </form>
-            </>
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-muted-foreground mb-4">Select a conversation to view messages</p>
-                {conversations.length === 0 && (
-                  <p className="text-muted-foreground">No conversations yet</p>
-                )}
-              </div>
-            </div>
-          )}
+          <MessageArea 
+            selectedConversation={selectedConversation}
+            messages={messages}
+            participant={participant}
+            currentUserId={currentUserId}
+            userRole={userRole}
+            mockUsers={mockUsers}
+            onSendMessage={sendMessage}
+          />
         </div>
       </div>
     </div>
