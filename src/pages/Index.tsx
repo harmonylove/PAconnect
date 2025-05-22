@@ -9,9 +9,9 @@ const IndexContent = () => {
   const { userRole, toggleUserRole, isPublic } = useUser();
   
   useEffect(() => {
-    if (isPublic) {
-      toast.success("Application is now public!", {
-        description: "Anyone can access this application without authentication",
+    if (!isPublic) {
+      toast.success("Application is now private!", {
+        description: "Authentication is required to access this application",
         duration: 5000,
       });
     }

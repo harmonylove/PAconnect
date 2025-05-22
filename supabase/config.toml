@@ -20,11 +20,11 @@ port = 54323
 # Enable Supabase Studio on the specified port
 enabled = true
 
-# Allow public access without authentication
+# Require authentication for access
 [auth]
-enable_signup = true
+enable_signup = false
 
-# Configure CORS for public access
+# Configure CORS for restricted access
 [api.cors]
 enabled = true
 origin = "*"

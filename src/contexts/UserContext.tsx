@@ -12,7 +12,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRole] = useState<UserRole>('assistant');
-  const [isPublic] = useState<boolean>(true); // Set public access to always true for now
+  const [isPublic] = useState<boolean>(false); // Set to private access
 
   const toggleUserRole = () => {
     setUserRole(prev => prev === 'assistant' ? 'production' : 'assistant');
