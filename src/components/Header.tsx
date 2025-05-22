@@ -103,8 +103,8 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
           <Link to="/" className="flex items-center relative z-10">
             <FilmRoll className="w-24 h-10" />
             <div className="relative z-10">
-              <span className="text-xl font-bold text-brand-blue font-cursive">PA</span>
-              <span className="text-xl font-bold text-brand-teal font-cursive">Connect</span>
+              <span className="text-xl font-extrabold text-brand-blue font-cursive">PA</span>
+              <span className="text-xl font-extrabold text-brand-teal font-cursive">Connect</span>
             </div>
           </Link>
         </div>
