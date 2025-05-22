@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import JobHistory from "./pages/JobHistory";
 import AssistantProfile from "./pages/AssistantProfile";
 
+// Create a client outside of the component to avoid re-initialization on each render
 const queryClient = new QueryClient();
 
 const App = () => (
