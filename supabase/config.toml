@@ -1,1 +1,30 @@
+
+# This is your Supabase project configuration file
+# https://supabase.com/docs/guides/hosting/overview
+
 project_id = "dhtxjvqxylkyegpjvkpd"
+
+[api]
+# Port to use for the API URL
+port = 54321
+# Enable APIs on the specified port
+enabled = true
+
+[db]
+# Port to use for the database
+port = 54322
+
+[studio]
+# Port to use for Supabase Studio
+port = 54323
+# Enable Supabase Studio on the specified port
+enabled = true
+
+# Allow public access without authentication
+[auth]
+enable_signup = true
+
+# Configure CORS for public access
+[api.cors]
+enabled = true
+origin = "*"
