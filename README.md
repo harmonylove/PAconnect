@@ -1,8 +1,13 @@
+
 # Welcome to your Lovable project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/c6417cdb-dfd0-4220-abd7-eb6fc7dc038c
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## How can I edit this code?
 
