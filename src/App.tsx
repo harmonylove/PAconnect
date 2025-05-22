@@ -11,6 +11,8 @@ import JobHistory from "./pages/JobHistory";
 import AssistantProfile from "./pages/AssistantProfile";
 import Messages from "./pages/Messages";
 import CalendarPage from "./pages/CalendarPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 // Create a client outside of the component to avoid re-initialization on each render
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
             <Route path="/messages" element={<Messages />} />
             <Route path="/messages/:conversationId" element={<Messages />} />
             <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

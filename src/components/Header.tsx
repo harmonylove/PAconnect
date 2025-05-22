@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Bell, 
   Calendar, 
@@ -24,6 +24,7 @@ interface HeaderProps {
 
 export default function Header({ userRole = 'assistant', username = 'Guest', avatarUrl }: HeaderProps) {
   const isMobile = useIsMobile();
+  const location = useLocation();
   const [unreadMessages] = useState(2);
   const [unreadNotifications] = useState(3);
   
@@ -45,7 +46,12 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
         </Button>
       </Link>
       <Link to="/notifications">
-        <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
+        <Button 
+          variant={location.pathname === '/notifications' ? "default" : "ghost"} 
+          size="icon" 
+          aria-label="Notifications" 
+          className="relative"
+        >
           <Bell className="h-5 w-5" />
           {unreadNotifications > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -55,7 +61,7 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
         </Button>
       </Link>
       <Link to="/profile">
-        <Avatar className="h-8 w-8 border-2 border-primary/20">
+        <Avatar className={`h-8 w-8 border-2 ${location.pathname === '/profile' ? 'border-primary' : 'border-primary/20'}`}>
           <AvatarImage src={avatarUrl} alt={username} />
           <AvatarFallback className="bg-primary/10 text-primary">
             {username.charAt(0).toUpperCase()}
@@ -95,6 +101,9 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
                   </Link>
                   <Link to="/messages" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
                     Messages
+                  </Link>
+                  <Link to="/notifications" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
+                    Notifications
                   </Link>
                   <Link to="/profile" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
                     Profile
