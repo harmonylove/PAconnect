@@ -1,5 +1,5 @@
 
-import { Star } from 'lucide-react';
+import { History, Star } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +10,15 @@ interface AssistantCardProps {
   assistant: Assistant;
   onContact?: (assistant: Assistant) => void;
   onViewProfile?: (assistant: Assistant) => void;
+  onViewHistory?: (assistantId: string) => void;
 }
 
-export default function AssistantCard({ assistant, onContact, onViewProfile }: AssistantCardProps) {
+export default function AssistantCard({ 
+  assistant, 
+  onContact, 
+  onViewProfile,
+  onViewHistory 
+}: AssistantCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300">
       <CardHeader className="p-0">
@@ -55,6 +61,19 @@ export default function AssistantCard({ assistant, onContact, onViewProfile }: A
             </Badge>
           ))}
         </div>
+        
+        {onViewHistory && (
+          <div className="mt-3 flex items-center">
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-brand-blue" 
+              onClick={() => onViewHistory(assistant.id)}
+            >
+              <History className="h-3.5 w-3.5 mr-1" />
+              <span className="text-xs">View work history</span>
+            </Button>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="border-t pt-3 flex gap-2">
         <Button 

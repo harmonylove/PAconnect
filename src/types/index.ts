@@ -1,4 +1,3 @@
-
 export type UserRole = 'assistant' | 'production';
 
 export interface User {
@@ -20,6 +19,7 @@ export interface Assistant {
   location: string;
   availableCities: string[];
   rating: number;
+  jobHistory?: JobHistoryItem[];
 }
 
 export interface Production {
@@ -31,6 +31,18 @@ export interface Production {
   specialties: ProductionType[];
   location: string;
   rating: number;
+  jobHistory?: JobHistoryItem[];
+}
+
+export interface JobHistoryItem {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  startDate: Date;
+  endDate: Date;
+  productionType: ProductionType;
+  description?: string;
 }
 
 export type ProductionType = 'music_video' | 'commercial' | 'film' | 'tv' | 'documentary' | 'corporate' | 'other';

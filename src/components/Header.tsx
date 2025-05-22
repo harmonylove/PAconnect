@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { 
   Bell, 
   Calendar, 
+  History,
   Menu, 
   MessageSquare, 
   User 
@@ -89,6 +90,9 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
                   <Link to="/talents" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
                     {userRole === 'assistant' ? 'My Profile' : 'Find Assistants'}
                   </Link>
+                  <Link to="/job-history" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
+                    Job History
+                  </Link>
                   <Link to="/messages" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
                     Messages
                   </Link>
@@ -122,6 +126,10 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
             </Link>
             <Link to="/talents" className="font-medium text-gray-600 hover:text-brand-blue dark:text-gray-200 dark:hover:text-brand-blue-300">
               {userRole === 'assistant' ? 'My Profile' : 'Find Assistants'}
+            </Link>
+            <Link to="/job-history" className="font-medium text-gray-600 hover:text-brand-blue dark:text-gray-200 dark:hover:text-brand-blue-300">
+              <History className="h-4 w-4 inline mr-1" />
+              Job History
             </Link>
           </nav>
         )}

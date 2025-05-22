@@ -1,6 +1,6 @@
 
 import { format } from 'date-fns';
-import { CalendarDays, MapPin } from 'lucide-react';
+import { CalendarDays, History, MapPin } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,10 +10,17 @@ interface JobCardProps {
   job: Job;
   onApply?: (job: Job) => void;
   onViewDetails?: (job: Job) => void;
+  onViewHistory?: (productionId: string) => void;
   alreadyApplied?: boolean;
 }
 
-export default function JobCard({ job, onApply, onViewDetails, alreadyApplied = false }: JobCardProps) {
+export default function JobCard({ 
+  job, 
+  onApply, 
+  onViewDetails, 
+  onViewHistory,
+  alreadyApplied = false 
+}: JobCardProps) {
   const formattedDateRange = `${format(new Date(job.startDate), 'MMM d')} - ${format(new Date(job.endDate), 'MMM d, yyyy')}`;
   
   return (
@@ -59,6 +66,19 @@ export default function JobCard({ job, onApply, onViewDetails, alreadyApplied = 
                 </li>
               )}
             </ul>
+          </div>
+        )}
+        
+        {onViewHistory && (
+          <div className="mt-3 flex items-center">
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-brand-blue" 
+              onClick={() => onViewHistory(job.productionId)}
+            >
+              <History className="h-3.5 w-3.5 mr-1" />
+              <span className="text-xs">View company history</span>
+            </Button>
           </div>
         )}
       </CardContent>
