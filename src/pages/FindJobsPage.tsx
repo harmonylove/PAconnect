@@ -58,15 +58,15 @@ const mockJobs: Job[] = [
 export default function FindJobsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
-  const [productionTypeFilter, setProductionTypeFilter] = useState('');
-  const [paTypeFilter, setPaTypeFilter] = useState('');
+  const [productionTypeFilter, setProductionTypeFilter] = useState('all');
+  const [paTypeFilter, setPaTypeFilter] = useState('all');
 
   const filteredJobs = mockJobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = !locationFilter || job.location.toLowerCase().includes(locationFilter.toLowerCase());
-    const matchesProductionType = !productionTypeFilter || job.productionType === productionTypeFilter;
-    const matchesPaType = !paTypeFilter || job.paType === paTypeFilter;
+    const matchesProductionType = productionTypeFilter === 'all' || job.productionType === productionTypeFilter;
+    const matchesPaType = paTypeFilter === 'all' || job.paType === paTypeFilter;
     
     return matchesSearch && matchesLocation && matchesProductionType && matchesPaType;
   });
@@ -121,7 +121,7 @@ export default function FindJobsPage() {
                   <SelectValue placeholder="Production Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   {Object.entries(productionTypeLabels).map(([key, label]) => (
                     <SelectItem key={key} value={key}>{label}</SelectItem>
                   ))}
@@ -135,7 +135,7 @@ export default function FindJobsPage() {
                   <SelectValue placeholder="PA Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All PA Types</SelectItem>
+                  <SelectItem value="all">All PA Types</SelectItem>
                   {Object.entries(paTypeLabels).map(([key, label]) => (
                     <SelectItem key={key} value={key}>{label}</SelectItem>
                   ))}
