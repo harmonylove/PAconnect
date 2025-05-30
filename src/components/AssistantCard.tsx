@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Assistant, productionTypeLabels } from '@/types';
+import { Assistant, productionTypeLabels, paTypeLabels } from '@/types';
 
 interface AssistantCardProps {
   assistant: Assistant;
@@ -55,12 +55,24 @@ export default function AssistantCard({
           {assistant.bio}
         </div>
         
-        <div className="mt-4 flex flex-wrap gap-1">
-          {assistant.specialties.map((specialty) => (
-            <Badge key={specialty} variant="secondary">
-              {productionTypeLabels[specialty]}
-            </Badge>
-          ))}
+        <div className="mt-4">
+          <div className="text-xs font-medium text-gray-600 mb-2">Production Types:</div>
+          <div className="flex flex-wrap gap-1 mb-3">
+            {assistant.specialties.map((specialty) => (
+              <Badge key={specialty} variant="secondary" className="text-xs">
+                {productionTypeLabels[specialty]}
+              </Badge>
+            ))}
+          </div>
+          
+          <div className="text-xs font-medium text-gray-600 mb-2">PA Specialties:</div>
+          <div className="flex flex-wrap gap-1">
+            {assistant.paTypes.map((paType) => (
+              <Badge key={paType} variant="outline" className="text-xs bg-brand-teal/10 text-brand-teal border-brand-teal/20">
+                {paTypeLabels[paType]}
+              </Badge>
+            ))}
+          </div>
         </div>
         
         {onViewHistory && (

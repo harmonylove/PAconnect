@@ -4,7 +4,7 @@ import { CalendarDays, History, MapPin } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Job, productionTypeLabels } from '@/types';
+import { Job, productionTypeLabels, paTypeLabels } from '@/types';
 
 interface JobCardProps {
   job: Job;
@@ -28,7 +28,12 @@ export default function JobCard({
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold">{job.title}</CardTitle>
-          <Badge>{productionTypeLabels[job.productionType]}</Badge>
+          <div className="flex flex-col gap-1">
+            <Badge>{productionTypeLabels[job.productionType]}</Badge>
+            <Badge variant="outline" className="bg-brand-teal/10 text-brand-teal border-brand-teal/20">
+              {paTypeLabels[job.paType]}
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pb-3">

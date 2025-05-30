@@ -1,3 +1,4 @@
+
 export type UserRole = 'assistant' | 'production';
 
 export interface User {
@@ -8,6 +9,19 @@ export interface User {
   avatar?: string;
 }
 
+export type PAType = 'truck_pa' | 'set_pa' | 'ad_pa' | 'events_pa' | 'photoshoot_pa' | 'script_pa' | 'office_pa' | 'locations_pa';
+
+export const paTypeLabels: Record<PAType, string> = {
+  truck_pa: 'Truck PA',
+  set_pa: 'Set PA',
+  ad_pa: 'AD (Assistant Director)',
+  events_pa: 'Events PA',
+  photoshoot_pa: 'Photoshoot PA',
+  script_pa: 'Script PA',
+  office_pa: 'Office PA',
+  locations_pa: 'Locations PA'
+};
+
 export interface Assistant {
   id: string;
   userId: string;
@@ -16,6 +30,7 @@ export interface Assistant {
   bio: string;
   experience: string[];
   specialties: ProductionType[];
+  paTypes: PAType[];
   location: string;
   availableCities: string[];
   rating: number;
@@ -42,6 +57,7 @@ export interface JobHistoryItem {
   startDate: Date;
   endDate: Date;
   productionType: ProductionType;
+  paType?: PAType;
   description?: string;
 }
 
@@ -68,6 +84,7 @@ export interface Booking {
   endDate: Date;
   status: BookingStatus;
   productionType?: ProductionType;
+  paType?: PAType;
   description?: string;
   location?: string;
 }
@@ -81,6 +98,7 @@ export interface Job {
   endDate: Date;
   location: string;
   productionType: ProductionType;
+  paType: PAType;
   rate?: string;
   requirements?: string[];
   applicants?: string[]; // assistant IDs
