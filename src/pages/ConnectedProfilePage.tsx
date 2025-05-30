@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ArrowLeft, Edit2, Save, X, Star, Plus, Minus, MapPin, Mail, Phone, Building } from 'lucide-react';
+import { ArrowLeft, Edit2, Save, X, Star, Plus, Minus, MapPin, Mail, Phone, Building, Upload, FileText, History } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,45 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Header from '@/components/Header';
-import { UserRole, productionTypeLabels, paTypeLabels } from '@/types';
+import JobHistory from '@/components/JobHistory';
+import { UserRole, productionTypeLabels, paTypeLabels, JobHistoryItem } from '@/types';
+
+// Mock job history data for assistants
+const mockJobHistory: JobHistoryItem[] = [
+  {
+    id: "jh1",
+    title: "Set PA",
+    company: "Marvel Studios",
+    location: "Atlanta, GA",
+    startDate: new Date(2024, 0, 15),
+    endDate: new Date(2024, 2, 30),
+    productionType: "film",
+    paType: "set_pa",
+    description: "Assisted with daily set operations for major superhero film"
+  },
+  {
+    id: "jh2",
+    title: "Script PA",
+    company: "HBO Productions",
+    location: "Los Angeles, CA",
+    startDate: new Date(2023, 8, 1),
+    endDate: new Date(2023, 11, 15),
+    productionType: "tv",
+    paType: "script_pa",
+    description: "Managed script distribution and continuity for Emmy-nominated series"
+  },
+  {
+    id: "jh3",
+    title: "Truck PA",
+    company: "Commercial Kings",
+    location: "New York, NY",
+    startDate: new Date(2023, 5, 10),
+    endDate: new Date(2023, 5, 12),
+    productionType: "commercial",
+    paType: "truck_pa",
+    description: "Equipment management for luxury car commercial shoot"
+  }
+];
 
 // Mock data with proper typing
 const mockProfile = {
@@ -23,7 +61,8 @@ const mockProfile = {
     availableCities: ["San Francisco", "San Diego", "Las Vegas"],
     specialties: ["film", "tv", "documentary"],
     paTypes: ["set_pa", "truck_pa", "script_pa"],
-    rating: 4.9
+    rating: 4.9,
+    resumeUrl: "resume_sara_johnson.pdf"
   },
   production: {
     id: "p1",
@@ -39,9 +78,10 @@ const mockProfile = {
 };
 
 export default function ConnectedProfilePage() {
-  const [userRole] = useState<UserRole>('production'); // Default to production for demo
+  const [userRole] = useState<UserRole>('assistant'); // Default to assistant for demo
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(mockProfile[userRole]);
+  const [uploadedResume, setUploadedResume] = useState<File | null>(null);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -51,11 +91,15 @@ export default function ConnectedProfilePage() {
   const handleSave = () => {
     // In a real app, this would save to the backend
     console.log('Saving profile:', editedProfile);
+    if (uploadedResume) {
+      console.log('Uploading resume:', uploadedResume);
+    }
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setEditedProfile({ ...mockProfile[userRole] });
+    setUploadedResume(null);
     setIsEditing(false);
   };
 
@@ -81,6 +125,13 @@ export default function ConnectedProfilePage() {
           ? assistantProfile.paTypes.filter(pt => pt !== paType)
           : [...assistantProfile.paTypes, paType]
       }));
+    }
+  };
+
+  const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedResume(file);
     }
   };
 
@@ -226,6 +277,50 @@ export default function ConnectedProfilePage() {
                     </p>
                   )}
                 </div>
+
+                {/* Resume Section (Assistant only) */}
+                {userRole === 'assistant' && (
+                  <div>
+                    <h2 className="font-semibold text-lg mb-3">Resume</h2>
+                    {isEditing ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleResumeUpload}
+                            className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-brand-blue file:text-white hover:file:bg-brand-blue-600"
+                          />
+                          <Upload className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                        {uploadedResume && (
+                          <p className="text-sm text-green-600">
+                            Ready to upload: {uploadedResume.name}
+                          </p>
+                        )}
+                        {assistantProfile?.resumeUrl && !uploadedResume && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <FileText className="h-4 w-4" />
+                            Current resume: {assistantProfile.resumeUrl}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        {assistantProfile?.resumeUrl ? (
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-brand-blue" />
+                            <Button variant="link" className="p-0 h-auto text-brand-blue">
+                              {assistantProfile.resumeUrl}
+                            </Button>
+                          </div>
+                        ) : (
+                          <p className="text-muted-foreground">No resume uploaded</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 {/* Available Cities (Assistant only) */}
                 {userRole === 'assistant' && assistantProfile && (
@@ -239,6 +334,13 @@ export default function ConnectedProfilePage() {
                         </div>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {/* Job History Section (Assistant only) */}
+                {userRole === 'assistant' && !isEditing && (
+                  <div>
+                    <JobHistory history={mockJobHistory} title="Work History" />
                   </div>
                 )}
               </div>

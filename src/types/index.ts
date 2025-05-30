@@ -35,6 +35,7 @@ export interface Assistant {
   availableCities: string[];
   rating: number;
   jobHistory?: JobHistoryItem[];
+  resumeUrl?: string;
 }
 
 export interface Production {
