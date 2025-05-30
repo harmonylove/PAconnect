@@ -7,10 +7,17 @@ import {
   History,
   Menu, 
   MessageSquare, 
-  User 
+  User,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { UserRole } from '@/types';
@@ -60,14 +67,43 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
           )}
         </Button>
       </Link>
-      <Link to="/profile">
-        <Avatar className={`h-8 w-8 border-2 ${location.pathname === '/profile' ? 'border-primary' : 'border-primary/20'}`}>
-          <AvatarImage src={avatarUrl} alt={username} />
-          <AvatarFallback className="bg-primary/10 text-primary">
-            {username.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-      </Link>
+      
+      {/* Profile Dropdown */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="flex items-center gap-2 p-1">
+            <Avatar className={`h-8 w-8 border-2 ${location.pathname === '/profile' ? 'border-primary' : 'border-primary/20'}`}>
+              <AvatarImage src={avatarUrl} alt={username} />
+              <AvatarFallback className="bg-primary/10 text-primary">
+                {username.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48 bg-white border shadow-md">
+          <DropdownMenuItem asChild>
+            <Link to="/profile" className="flex items-center w-full px-2 py-2 hover:bg-gray-100">
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/connected-profile" className="flex items-center w-full px-2 py-2 hover:bg-gray-100">
+              <User className="h-4 w-4 mr-2" />
+              Connected Profile
+            </Link>
+          </DropdownMenuItem>
+          {userRole === 'production' && (
+            <DropdownMenuItem asChild>
+              <Link to="/find-jobs" className="flex items-center w-full px-2 py-2 hover:bg-gray-100">
+                <History className="h-4 w-4 mr-2" />
+                Find Jobs
+              </Link>
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 
@@ -108,6 +144,11 @@ export default function Header({ userRole = 'assistant', username = 'Guest', ava
                   <Link to="/profile" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
                     Profile
                   </Link>
+                  {userRole === 'production' && (
+                    <Link to="/find-jobs" className="text-lg font-semibold text-brand-blue hover:text-brand-blue-600">
+                      Find Jobs
+                    </Link>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

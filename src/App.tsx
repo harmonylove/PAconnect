@@ -14,6 +14,7 @@ import CalendarPage from "./pages/CalendarPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import ConnectedProfilePage from "./pages/ConnectedProfilePage";
+import FindJobsPage from "./pages/FindJobsPage";
 
 // Create a client outside of the component to avoid re-initialization on each render
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/connected-profile" element={<ConnectedProfilePage />} />
+            <Route path="/find-jobs" element={<FindJobsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
