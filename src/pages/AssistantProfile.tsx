@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import JobHistory from '@/components/JobHistory';
 import Header from '@/components/Header';
-import { Assistant, JobHistoryItem, productionTypeLabels } from '@/types';
+import { Assistant, JobHistoryItem, productionTypeLabels, paTypeLabels } from '@/types';
 
 // Mock data for a sample assistant
 const mockAssistant: Assistant = {
@@ -21,6 +21,7 @@ const mockAssistant: Assistant = {
     "Experienced with high-pressure environments and tight deadlines"
   ],
   specialties: ["film", "tv", "documentary"],
+  paTypes: ["set_pa", "truck_pa", "script_pa"],
   location: "Los Angeles, CA",
   availableCities: ["San Francisco", "San Diego", "Las Vegas"],
   rating: 4.9,
@@ -33,6 +34,7 @@ const mockAssistant: Assistant = {
       startDate: new Date(2024, 2, 10),
       endDate: new Date(2024, 2, 24),
       productionType: 'film',
+      paType: 'set_pa',
       description: 'Assisted with set operations and logistics for a feature film.'
     },
     {
@@ -43,6 +45,7 @@ const mockAssistant: Assistant = {
       startDate: new Date(2024, 1, 5),
       endDate: new Date(2024, 1, 7),
       productionType: 'music_video',
+      paType: 'truck_pa',
       description: 'Worked on a music video shoot for a major artist.'
     },
     {
@@ -53,6 +56,7 @@ const mockAssistant: Assistant = {
       startDate: new Date(2023, 11, 15),
       endDate: new Date(2024, 0, 15),
       productionType: 'tv',
+      paType: 'script_pa',
       description: 'Month-long contract for a TV series production.'
     }
   ]
@@ -148,11 +152,22 @@ export default function AssistantProfile() {
               {/* Right column - Details and Specialties */}
               <div className="space-y-6">
                 <div>
-                  <h2 className="font-semibold text-lg mb-2">Specialties</h2>
+                  <h2 className="font-semibold text-lg mb-2">Production Specialties</h2>
                   <div className="flex flex-wrap gap-2">
                     {assistant.specialties.map((specialty) => (
                       <Badge key={specialty} variant="secondary" className="text-sm">
                         {productionTypeLabels[specialty]}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="font-semibold text-lg mb-2">PA Types</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {assistant.paTypes.map((paType) => (
+                      <Badge key={paType} variant="outline" className="text-sm bg-brand-teal/10 text-brand-teal border-brand-teal/20">
+                        {paTypeLabels[paType]}
                       </Badge>
                     ))}
                   </div>
