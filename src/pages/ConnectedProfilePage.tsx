@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import Header from '@/components/Header';
 import { UserRole, productionTypeLabels, paTypeLabels } from '@/types';
 
-// Mock data
+// Mock data with proper typing
 const mockProfile = {
   assistant: {
     id: "a1",
@@ -59,7 +59,7 @@ export default function ConnectedProfilePage() {
     setIsEditing(false);
   };
 
-  const handleFieldChange = (field: keyof typeof editedProfile, value: string) => {
+  const handleFieldChange = (field: string, value: string) => {
     setEditedProfile(prev => ({ ...prev, [field]: value }));
   };
 
@@ -73,17 +73,20 @@ export default function ConnectedProfilePage() {
   };
 
   const handlePATypeToggle = (paType: string) => {
-    if (userRole === 'assistant' && 'paTypes' in editedProfile) {
+    if (userRole === 'assistant') {
+      const assistantProfile = editedProfile as typeof mockProfile.assistant;
       setEditedProfile(prev => ({
         ...prev,
-        paTypes: prev.paTypes.includes(paType)
-          ? prev.paTypes.filter(pt => pt !== paType)
-          : [...prev.paTypes, paType]
+        paTypes: assistantProfile.paTypes.includes(paType)
+          ? assistantProfile.paTypes.filter(pt => pt !== paType)
+          : [...assistantProfile.paTypes, paType]
       }));
     }
   };
 
   const currentProfile = isEditing ? editedProfile : mockProfile[userRole];
+  const assistantProfile = userRole === 'assistant' ? currentProfile as typeof mockProfile.assistant : null;
+  const productionProfile = userRole === 'production' ? currentProfile as typeof mockProfile.production : null;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -122,7 +125,10 @@ export default function ConnectedProfilePage() {
             
             <div className="absolute bottom-0 left-0 w-full p-6 pt-20 pb-0">
               <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                <AvatarImage src={currentProfile.photo || currentProfile.logo} alt={currentProfile.name} />
+                <AvatarImage 
+                  src={assistantProfile?.photo || productionProfile?.logo} 
+                  alt={currentProfile.name} 
+                />
                 <AvatarFallback className="text-xl font-semibold bg-brand-blue text-white">
                   {currentProfile.name.charAt(0)}
                 </AvatarFallback>
@@ -207,7 +213,7 @@ export default function ConnectedProfilePage() {
                   </h2>
                   {isEditing ? (
                     <Textarea
-                      value={userRole === 'assistant' ? currentProfile.bio : currentProfile.description}
+                      value={assistantProfile?.bio || productionProfile?.description || ''}
                       onChange={(e) => handleFieldChange(
                         userRole === 'assistant' ? 'bio' : 'description', 
                         e.target.value
@@ -216,20 +222,20 @@ export default function ConnectedProfilePage() {
                     />
                   ) : (
                     <p className="text-muted-foreground">
-                      {userRole === 'assistant' ? currentProfile.bio : currentProfile.description}
+                      {assistantProfile?.bio || productionProfile?.description}
                     </p>
                   )}
                 </div>
                 
                 {/* Available Cities (Assistant only) */}
-                {userRole === 'assistant' && 'availableCities' in currentProfile && (
+                {userRole === 'assistant' && assistantProfile && (
                   <div>
                     <h2 className="font-semibold text-lg mb-2">Available Locations</h2>
                     <div className="text-muted-foreground">
                       <div className="font-medium text-foreground">{currentProfile.location}</div>
-                      {currentProfile.availableCities.length > 0 && (
+                      {assistantProfile.availableCities.length > 0 && (
                         <div className="mt-1">
-                          Also available in: {currentProfile.availableCities.join(', ')}
+                          Also available in: {assistantProfile.availableCities.join(', ')}
                         </div>
                       )}
                     </div>
@@ -268,7 +274,7 @@ export default function ConnectedProfilePage() {
                 </div>
 
                 {/* PA Types (Assistant only) */}
-                {userRole === 'assistant' && 'paTypes' in currentProfile && (
+                {userRole === 'assistant' && assistantProfile && (
                   <div>
                     <h2 className="font-semibold text-lg mb-3">PA Types</h2>
                     {isEditing ? (
@@ -277,7 +283,7 @@ export default function ConnectedProfilePage() {
                           <label key={key} className="flex items-center space-x-2 cursor-pointer">
                             <input
                               type="checkbox"
-                              checked={currentProfile.paTypes.includes(key)}
+                              checked={assistantProfile.paTypes.includes(key)}
                               onChange={() => handlePATypeToggle(key)}
                               className="rounded"
                             />
@@ -287,7 +293,7 @@ export default function ConnectedProfilePage() {
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {currentProfile.paTypes.map((paType) => (
+                        {assistantProfile.paTypes.map((paType) => (
                           <Badge key={paType} variant="outline" className="text-sm bg-brand-teal/10 text-brand-teal border-brand-teal/20">
                             {paTypeLabels[paType]}
                           </Badge>
