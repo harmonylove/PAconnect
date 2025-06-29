@@ -1,14 +1,11 @@
+
 import { useState } from 'react';
-import { Search, MapPin, Calendar, DollarSign, Filter, Star, Map } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Header from '@/components/Header';
 import InteractiveJobMap from '@/components/InteractiveJobMap';
-import { Job, productionTypeLabels, paTypeLabels } from '@/types';
+import JobSearchFilters from '@/components/JobSearchFilters';
+import JobListView from '@/components/JobListView';
+import { Job } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
 // Mock jobs data
@@ -109,152 +106,18 @@ export default function FindJobsPage() {
           </TabsContent>
           
           <TabsContent value="list" className="space-y-6">
-            {/* Search and Filters */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      placeholder="Search jobs..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      placeholder="Location"
-                      value={locationFilter}
-                      onChange={(e) => setLocationFilter(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <Select value={productionTypeFilter} onValueChange={setProductionTypeFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Production Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      {Object.entries(productionTypeLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Select value={paTypeFilter} onValueChange={setPaTypeFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="PA Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All PA Types</SelectItem>
-                      {Object.entries(paTypeLabels).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <JobSearchFilters
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              locationFilter={locationFilter}
+              setLocationFilter={setLocationFilter}
+              productionTypeFilter={productionTypeFilter}
+              setProductionTypeFilter={setProductionTypeFilter}
+              paTypeFilter={paTypeFilter}
+              setPaTypeFilter={setPaTypeFilter}
+            />
 
-            {/* Results */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">
-                  {filteredJobs.length} {filteredJobs.length === 1 ? 'Job' : 'Jobs'} Found
-                </h2>
-              </div>
-
-              {filteredJobs.map((job) => (
-                <Card key={job.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl">{job.title}</CardTitle>
-                        <CardDescription className="flex items-center mt-1">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          {job.location}
-                        </CardDescription>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-semibold text-green-600">{job.rate}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {job.applicants?.length || 0} applicants
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">{job.description}</p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <Badge variant="secondary">
-                        {productionTypeLabels[job.productionType]}
-                      </Badge>
-                      <Badge variant="outline" className="bg-brand-teal/10 text-brand-teal border-brand-teal/20">
-                        {paTypeLabels[job.paType]}
-                      </Badge>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        {job.startDate.toLocaleDateString()} - {job.endDate.toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <DollarSign className="h-4 w-4 mr-2" />
-                        {job.rate}
-                      </div>
-                    </div>
-                    
-                    {job.requirements && job.requirements.length > 0 && (
-                      <div className="mb-4">
-                        <h4 className="font-medium mb-2">Requirements:</h4>
-                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                          {job.requirements.map((req, index) => (
-                            <li key={index}>{req}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Star className="h-4 w-4 mr-1" />
-                        Posted by verified production company
-                      </div>
-                      <Button 
-                        onClick={() => handleApply(job.id)}
-                        className="bg-brand-teal hover:bg-brand-teal-600"
-                      >
-                        Apply Now
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-              {filteredJobs.length === 0 && (
-                <Card>
-                  <CardContent className="text-center py-12">
-                    <h3 className="text-lg font-medium mb-2">No jobs found</h3>
-                    <p className="text-muted-foreground">
-                      Try adjusting your search criteria to find more opportunities.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+            <JobListView filteredJobs={filteredJobs} onApply={handleApply} />
           </TabsContent>
         </Tabs>
       </main>
