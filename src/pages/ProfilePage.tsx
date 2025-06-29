@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -15,8 +15,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/sonner';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { ProductionType, productionTypeLabels } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
@@ -40,31 +42,66 @@ const profileFormSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function ProfilePage() {
-  const { userRole } = useUser();
+  const { user } = useAuth();
+  const { userRole, userProfile, loading } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [specialties, setSpecialties] = useState<ProductionType[]>(['film', 'tv', 'documentary']);
   
-  // Default values based on mock data
-  const defaultValues: ProfileFormValues = {
-    name: "Sara Johnson",
-    email: "sara.johnson@example.com",
-    phone: "(555) 123-4567",
-    location: "Los Angeles, CA",
-    bio: "Professional PA with 5+ years of experience in film and TV production. I specialize in keeping sets organized and running efficiently. Always punctual, detail-oriented, and ready to solve problems before they arise.",
-    travelingAvailable: true,
-    specialties: specialties,
-    availableCities: "San Francisco, San Diego, Las Vegas",
-  };
-  
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      location: '',
+      bio: '',
+      travelingAvailable: true,
+      specialties: specialties,
+      availableCities: '',
+    },
   });
   
-  function onSubmit(data: ProfileFormValues) {
-    toast.success("Profile updated successfully");
-    console.log(data);
-    setIsEditing(false);
+  // Update form when userProfile loads
+  useEffect(() => {
+    if (userProfile) {
+      form.reset({
+        name: userProfile.name || '',
+        email: userProfile.email || '',
+        phone: userProfile.phone || '',
+        location: userProfile.location || '',
+        bio: userProfile.bio || '',
+        travelingAvailable: true,
+        specialties: specialties,
+        availableCities: '',
+      });
+    }
+  }, [userProfile, form, specialties]);
+  
+  async function onSubmit(data: ProfileFormValues) {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          name: data.name,
+          phone: data.phone,
+          location: data.location,
+          bio: data.bio,
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error updating profile:', error);
+        toast.error('Failed to update profile');
+      } else {
+        toast.success("Profile updated successfully");
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   }
 
   const addSpecialty = (type: ProductionType) => {
@@ -76,6 +113,16 @@ export default function ProfilePage() {
   const removeSpecialty = (type: ProductionType) => {
     setSpecialties(specialties.filter(t => t !== type));
   };
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="max-w-4xl mx-auto px-4 py-6 md:px-6">
+          <div className="text-center">Loading profile...</div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -109,8 +156,10 @@ export default function ProfilePage() {
                 <div className="flex justify-center">
                   <div className="relative">
                     <Avatar className="w-24 h-24 border-4 border-background">
-                      <AvatarImage src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" />
-                      <AvatarFallback className="text-xl">SJ</AvatarFallback>
+                      <AvatarImage src={userProfile?.avatar_url} />
+                      <AvatarFallback className="text-xl">
+                        {userProfile?.name?.[0]?.toUpperCase() || 'U'}
+                      </AvatarFallback>
                     </Avatar>
                     
                     {isEditing && (
@@ -138,10 +187,10 @@ export default function ProfilePage() {
                     )}
                   </div>
                 </div>
-                <CardTitle className="mt-2">Sara Johnson</CardTitle>
+                <CardTitle className="mt-2">{userProfile?.name || 'User'}</CardTitle>
                 <CardDescription className="flex items-center justify-center">
                   <MapPin className="h-3 w-3 mr-1" />
-                  Los Angeles, CA
+                  {userProfile?.location || 'Location not set'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -152,11 +201,11 @@ export default function ProfilePage() {
                       {userRole === 'assistant' ? 'Production Assistant' : 'Production Company'}
                     </div>
                     <div className="text-muted-foreground text-sm">Member Since</div>
-                    <div className="text-sm font-medium text-right">January 2023</div>
-                    <div className="text-muted-foreground text-sm">Completed Jobs</div>
-                    <div className="text-sm font-medium text-right">24</div>
-                    <div className="text-muted-foreground text-sm">Rating</div>
-                    <div className="text-sm font-medium text-right">4.9/5.0</div>
+                    <div className="text-sm font-medium text-right">
+                      {userProfile?.created_at ? new Date(userProfile.created_at).toLocaleDateString() : 'Recently'}
+                    </div>
+                    <div className="text-muted-foreground text-sm">Email</div>
+                    <div className="text-sm font-medium text-right">{userProfile?.email}</div>
                   </div>
                 </div>
               </CardContent>

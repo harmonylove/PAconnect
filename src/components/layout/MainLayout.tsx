@@ -1,26 +1,41 @@
 
 import { ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
 import Header from '@/components/Header';
-import { useUser } from '@/contexts/UserContext';
 
 interface MainLayoutProps {
   children: ReactNode;
-  hideHeader?: boolean;
 }
 
-export default function MainLayout({ children, hideHeader = false }: MainLayoutProps) {
-  const { userRole } = useUser();
-  
+export default function MainLayout({ children }: MainLayoutProps) {
+  const { signOut, user } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {!hideHeader && (
-        <Header 
-          userRole={userRole} 
-          username={userRole === 'assistant' ? 'Sara Johnson' : 'Acme Productions'}
-          avatarUrl={userRole === 'assistant' ? 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158' : undefined}
-        />
-      )}
-      {children}
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      {/* Sign out button in top right */}
+      <div className="fixed top-4 right-4 z-50">
+        {user && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleSignOut}
+            className="bg-white/90 backdrop-blur-sm"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
+        )}
+      </div>
+      
+      <main>{children}</main>
     </div>
   );
 }
